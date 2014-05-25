@@ -1,10 +1,10 @@
 {
     "name": "popup",
-    "version": "v0.1",
+    "version": "0.1.0",
     "title": "Simple and Customizable Popup Manager",
-    "author": "Bryan Cua",
+    "author": {"name": "Bryan Cua"},
     "licenses": [{"type": "MIT", "url": "http://opensource.org/licenses/MIT"}],
-    "dependencies": "jquery",
+    "dependencies": {"jquery": "2.0.2"},
     "description": "$.popup manages different layers of popups on a page. You might have a popup for alerts, another for dropdowns, and another for general messages. You also may not want two dropdowns to be open at the same time. $.popup ensures this.",
     "homepage": "http://js.lovelotte.net/jQ/popup",
     "demo": "http://js.lovelotte.net/jQ/popup/demo.php"
