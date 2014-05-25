@@ -6,8 +6,8 @@
     var defaults = {
         name: 'main',
         class: '',
-        on: 'mouse',
-        off: 'mouse',
+        on: 'mouseover',
+        off: 'mouseout',
         delay: 0,
         animate: false,
         offy: 3,
@@ -132,48 +132,26 @@
         if( !o.name ) o.name = 'main';
         try{ $.popup.create(o.name); }catch(e){}; 
         
-        var isClickOn = false, isClickOff; 
+        var isSame = (on == off) && on; 
         
-        switch(on){
-            case 'mouse': case 'mouseover': case 'onmouse': case 'onmouseover': case 'm':
-                $(this).mouseover(function(){
-                    var o = getOpts.call( this );
+        if( isSame ){
+            $(this).on(on, function(){
+                var o = getOpts.call( this );   
+                if( !o.currClicked || invoked !== this ){
                     $.popup.show( this );
-                });
-                break;
-            default:
-                isClickOn = true; 
-        }
-        
-        switch(off){
-            case 'mouse': case 'mouseover': case 'onmouse': case 'onmouseover': case 'm': case 'mouseenter': 
-                $(this).mouseenter(function(){
-                    var o = getOpts.call( this ); clearTimeout(o.tm);
-                }).on('mouseleave', function(){
-                    if( invoked !== this ) return; 
-                    var o = getOpts.call( this ); 
-                    $.popup.hide(o.name, o.animate, o.delay );
-                });
-                break;
-            default:
-                isClickOff = true; 
-        }
-        
-        if( isClickOn && isClickOff ){
-            $(this).click(function(){
-                 var o = getOpts.call( this ); 
-                 if( !o.currClicked || invoked !== this ){
-                     $.popup.show( this );
-                     o.currClicked = true;
-                 }else{
-                     $.popup.hide( o.name, o.animate, o.delay );
-                     o.currClicked = false;
-                 }
-             });               
-        }else if( isClickOn ){
-            $(this).click(function(){ $.popup.show(this); });
-        }else if( isClickOff ){
-            $(this).click(function(){ var o = getOpts.call( this ); $.popup.hide( o.name, o.animate, o.delay ); });
+                    o.currClicked = true;
+                }else{
+                    $.popup.hide( o.name, o.animate, o.delay );
+                    o.currClicked = false;
+                }
+            });
+        }else{
+            if( on ) $(this).on(on, function(){ $.popup.show( this ); });
+            if( off ) $(this).on(off, function(){ 
+                if( invoked !== this ) return;
+                var o = getOpts.call( this ); 
+                $.popup.hide(o.name, o.animate, o.delay );
+            });
         }
     };   
 })(jQuery);
