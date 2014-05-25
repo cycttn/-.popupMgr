@@ -15,20 +15,20 @@
         currClicked: false
     };
     
-    var data_key = "popup-id",
+    var data_key = "popupMgr-id",
         opts = {}, c=1, currClass='', invoked=null,
-        $div = $('<div />').addClass('popup hidden'), $ctxt = {};
+        $div = $('<div />').addClass('popupMgr hidden'), $ctxt = {};
     
     function create(){ return $div.clone().appendTo('body'); }
     function getOpts(){ return opts[parseInt( $(this).attr(data_key) )]; }
     
-    $.popup = {
+    $.popupMgr = {
         create: function(name){
-            if( $ctxt[name] ) throw "Popup: popup by name \"" + name +  "\" already exists!";
+            if( $ctxt[name] ) throw "popupMgr: popupMgr by name \"" + name +  "\" already exists!";
             $ctxt[name] = create(); 
         },
         update: function(name, inner){
-            if( !$ctxt[name] ) throw "Popup: popup by name \"" + name + "\" doesn't exist!";
+            if( !$ctxt[name] ) throw "popupMgr: popupMgr by name \"" + name + "\" doesn't exist!";
             $ctxt[name].html(inner);
         },
         _changeClass: function(cls, name){
@@ -61,9 +61,9 @@
                 var dim = this._dim( $el ), top = ( wnd.h+wnd.sy > dim.y+dim.h+offy+h )? dim.y+dim.h+offy : dim.y - h - offy;
                 $ctxt.css({ position: 'absolute', top: top, left: dim.x, width: dim.w });
             }else if( !$.isArray(s) ){
-                throw "Popup: Property 'static' in options must be an array or equivalent to boolean false";
+                throw "popupMgr: Property 'static' in options must be an array or equivalent to boolean false";
             }else if( s.length < 2 ){
-                throw "Popup: Property 'static' in options must have at least length 2";
+                throw "popupMgr: Property 'static' in options must have at least length 2";
             }else{
                 if( s[2] ) w = s[2];                   
                 if( s[3] ) h = s[3]; //if there is a fourth param, it is height                
@@ -93,7 +93,7 @@
             var w = $c.outerWidth(), h = $c.outerHeight();
             this._hideNoAnim(o.name); //get the height
             
-            $.popup.pos( o.static, $c, $el, w, h, o.offy ); //position the popup!
+            $.popupMgr.pos( o.static, $c, $el, w, h, o.offy ); //position the popupMgr!
 
             o.animate? $c.show(o.delay) : this._showNoAnim(o.name);
         },
@@ -102,7 +102,7 @@
         }
     };
     
-    $.fn.popup = function(inner, opt){ //options, and data to put into the popup box
+    $.fn.popupMgr = function(inner, opt){ //options, and data to put into the popupMgr box
         var cid = this.attr(data_key); 
         if( !cid ){
             return this.each( function(){ init.call(this, inner, opt); } );
@@ -130,7 +130,7 @@
         $(this).attr(data_key, c++); //data key to get the id; added to the data-element as attribute
         
         if( !o.name ) o.name = 'main';
-        try{ $.popup.create(o.name); }catch(e){}; 
+        try{ $.popupMgr.create(o.name); }catch(e){}; 
         
         var isSame = (on == off) && on; 
         
@@ -138,19 +138,19 @@
             $(this).on(on, function(){
                 var o = getOpts.call( this );   
                 if( !o.currClicked || invoked !== this ){
-                    $.popup.show( this );
+                    $.popupMgr.show( this );
                     o.currClicked = true;
                 }else{
-                    $.popup.hide( o.name, o.animate, o.delay );
+                    $.popupMgr.hide( o.name, o.animate, o.delay );
                     o.currClicked = false;
                 }
             });
         }else{
-            if( on ) $(this).on(on, function(){ $.popup.show( this ); });
+            if( on ) $(this).on(on, function(){ $.popupMgr.show( this ); });
             if( off ) $(this).on(off, function(){ 
                 if( invoked !== this ) return;
                 var o = getOpts.call( this ); 
-                $.popup.hide(o.name, o.animate, o.delay );
+                $.popupMgr.hide(o.name, o.animate, o.delay );
             });
         }
     };   

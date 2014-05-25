@@ -1,5 +1,5 @@
 {
-    "name": "popup",
+    "name": "popupMgr",
     "version": "0.1.0",
     "title": "Simple and Customizable Popup Manager",
     "author": {"name": "Bryan Cua"},
