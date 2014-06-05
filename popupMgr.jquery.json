@@ -1,11 +1,12 @@
 {
     "name": "popupMgr",
-    "version": "0.1.2",
-    "title": "Simple and Customizable Popup Manager",
+    "version": "0.2.0",
+    "title": "popupMgr: Simple and Customizable Popup Manager",
     "author": {"name": "Bryan Cua"},
     "licenses": [{"type": "MIT", "url": "http://opensource.org/licenses/MIT"}],
     "dependencies": {"jquery": "2.0.2"},
-    "description": "$.popup manages different layers of popups on a page. You might have a popup for alerts, another for dropdowns, and another for general messages. You also may not want two dropdowns to be open at the same time. $.popup ensures this.",
+    "description": "$.popupMgr manages different layers of popups on a page. You might have a popup for alerts, another for dropdowns, and another for general messages. You also may not want two dropdowns to be open at the same time. $.popupMgr ensures this.",
     "homepage": "http://js.lovelotte.net/jQ/popup",
-    "demo": "http://js.lovelotte.net/jQ/popup/demo.php"
+    "demo": "http://js.lovelotte.net/jQ/popup/demo.php",
+    "keywords": ["popup", "dropdown", "manager"]
 }

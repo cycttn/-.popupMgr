@@ -73,20 +73,25 @@
                 $ctxt.css({position:'fixed', left: s[0], top:s[1], width: w, height: h });
             }
         },
-        
+        html: function(p, d){
+            p.contents().detach();
+            if( d instanceof jQuery) p.append(d);
+            else p.html(d); 
+        },
         //Actual Functions!
         show: function(el, o){
             var $el = $(el);
             
             if( !o ) o = getOpts.call($el);
-            var $c = $ctxt[o.name].html( o.data );
+            var $c = $ctxt[o.name]; 
             
             if( el === invoked ){ //if is previous element, just show; 
                 o.animate? $c.show(o.delay) : this._showNoAnim(o.name);
                 return; 
             }
             invoked = el; //set invoked
-            
+
+            $.popupMgr.html($c, o.data); //add data
             this._changeClass(o.cls, o.name); //change the class
 
             this._showNoAnim(o.name);
@@ -113,7 +118,7 @@
         if( opt ){ opts[cid] = $.extend({}, opts[cid], opt); }
         if( inner !== null ){
             opts[cid].data = inner;
-            $ctxt[opts[cid].name].html(inner);
+            $.popupMgr.html($ctxt[opts[cid].name], inner);
         }  
         if( invoked == this.get(0) ) invoked = null; 
         
