@@ -19,10 +19,15 @@
         opts = {}, c=1, currClass='', invoked=null,
         $div = $('<div />').addClass('popupMgr hidden'), $ctxt = {};
     
+    var invName = {}; 
+    
     function create(){ return $div.clone().appendTo('body'); }
     function getOpts(){ return opts[parseInt( $(this).attr(data_key) )]; }
     
     $.popupMgr = {
+        invoked: function(name){
+            return (name && invName[name])? invName[name] : invoked; 
+        },
         create: function(name){
             if( $ctxt[name] ) throw "popupMgr: popupMgr by name \"" + name +  "\" already exists!";
             $ctxt[name] = create(); 
@@ -90,6 +95,7 @@
                 return; 
             }
             invoked = el; //set invoked
+            invName[ o.name ] = el;
 
             $.popupMgr.html($c, o.data); //add data
             this._changeClass(o.cls, o.name); //change the class
