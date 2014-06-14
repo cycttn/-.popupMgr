@@ -12,7 +12,8 @@
         animate: false,
         offy: 3,
         static: false,
-        currClicked: false
+        currClicked: false,
+        showOn: 0 //top, buttom; 1 = left, right
     };
     
     var data_key = "popupMgr-id",
@@ -27,6 +28,10 @@
     $.popupMgr = {
         invoked: function(name){
             return (name && invName[name])? invName[name] : invoked; 
+        },
+        clearInvoked: function(name){
+            invoked = null;
+            if( name && invName[name]) invName[name] = null;
         },
         create: function(name){
             if( $ctxt[name] ) throw "popupMgr: popupMgr by name \"" + name +  "\" already exists!";
@@ -59,12 +64,19 @@
                 sy: $(window).scrollTop()
             };
         },
-        pos: function(s, $ctxt, $el, w, h, offy){
+        pos: function(s, $ctxt, $el, w, h, offy, showOn){
             var wnd = this._wnd();
             
             if( !s ){
-                var dim = this._dim( $el ), top = ( wnd.h+wnd.sy > dim.y+dim.h+offy+h )? dim.y+dim.h+offy : dim.y - h - offy;
-                $ctxt.css({ position: 'absolute', top: top, left: dim.x, width: dim.w });
+                var dim = this._dim( $el ); 
+                if( showOn ){
+                    var left = ( wnd.w < dim.x+dim.w+w )? dim.x-w : dim.x+dim.w; 
+                    $ctxt.css({position:'absolute', top: dim.y, left: left, width: dim.w });
+                }else{
+                    var top = ( wnd.h+wnd.sy > dim.y+dim.h+offy+h )? dim.y+dim.h+offy : dim.y - h - offy;
+                    $ctxt.css({ position: 'absolute', top: top, left: dim.x, width: dim.w });                    
+                }
+                
             }else if( !$.isArray(s) ){
                 throw "popupMgr: Property 'static' in options must be an array or equivalent to boolean false";
             }else if( s.length < 2 ){
@@ -88,28 +100,29 @@
             var $el = $(el);
             
             if( !o ) o = getOpts.call($el);
+            else o = $.extend({}, defaults, o);
+            
             var $c = $ctxt[o.name]; 
             
-            if( el === invoked ){ //if is previous element, just show; 
-                o.animate? $c.show(o.delay) : this._showNoAnim(o.name);
-                return; 
+            if( el !== invoked ){
+                invoked = el; //set invoked
+                invName[ o.name ] = el;
+
+                $.popupMgr.html($c, o.data); //add data
+                this._changeClass(o.cls, o.name); //change the class
             }
-            invoked = el; //set invoked
-            invName[ o.name ] = el;
-
-            $.popupMgr.html($c, o.data); //add data
-            this._changeClass(o.cls, o.name); //change the class
-
+            
             this._showNoAnim(o.name);
             var w = $c.outerWidth(), h = $c.outerHeight();
             this._hideNoAnim(o.name); //get the height
             
-            $.popupMgr.pos( o.static, $c, $el, w, h, o.offy ); //position the popupMgr!
+            $.popupMgr.pos( o.static, $c, $el, w, h, o.offy, o.showOn ); //position the popupMgr!
 
             o.animate? $c.show(o.delay) : this._showNoAnim(o.name);
         },
         hide: function(name, a, delay){
             a? $ctxt[name].hide(delay) : this._hideNoAnim(name); 
+            $.popupMgr.clearInvoked(name);
         }
     };
     
@@ -146,7 +159,7 @@
         var isSame = (on == off) && on; 
         
         if( isSame ){
-            $(this).on(on, function(){
+            $(this).on(on, function(e){
                 var o = getOpts.call( this );   
                 if( !o.currClicked || invoked !== this ){
                     $.popupMgr.show( this );
@@ -155,13 +168,16 @@
                     $.popupMgr.hide( o.name, o.animate, o.delay );
                     o.currClicked = false;
                 }
+                
+                e.stopPropagation();
             });
         }else{
-            if( on ) $(this).on(on, function(){ $.popupMgr.show( this ); });
-            if( off ) $(this).on(off, function(){ 
+            if( on ) $(this).on(on, function(e){ $.popupMgr.show( this ); e.stopPropagation(); });
+            if( off ) $(this).on(off, function(e){ 
                 if( invoked !== this ) return;
                 var o = getOpts.call( this ); 
                 $.popupMgr.hide(o.name, o.animate, o.delay );
+                e.stopPropagation();
             });
         }
     };   
