@@ -119,11 +119,14 @@
             $.popupMgr.pos( o.static, $c, $el, w, h, o.offy, o.showOn ); //position the popupMgr!
 
             o.animate? $c.show(o.delay) : this._showNoAnim(o.name);
+            
+            $el.trigger('show.popupMgr', [o.data, $c]);
         },
         hide: function(name, a, delay){
+            if( invName[name] ) $(invName[name]).trigger('hide.popupMgr', [ $ctxt[name] ]);            
             a? $ctxt[name].hide(delay) : this._hideNoAnim(name); 
-            $.popupMgr.clearInvoked(name);
-        }
+            $.popupMgr.clearInvoked(name);            
+       }
     };
     
     $.fn.popupMgr = function(inner, opt){ //options, and data to put into the popupMgr box
@@ -147,7 +150,7 @@
     function init(inner, opt){        
         var o = $.extend({}, defaults, opt),
             on = o.on.toLowerCase(), off = o.off.toLowerCase(); 
-        
+                
         o.data = inner;         
         opts[c] = o; 
         opts[c].tm = null; 
