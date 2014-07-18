@@ -64,17 +64,32 @@
                 sy: $(window).scrollTop()
             };
         },
-        pos: function(s, $ctxt, $el, w, h, offy, showOn){
+        pos: function(s, $c, $el, w, h, offy, showOn){
             var wnd = this._wnd();
+            
+            if( ! ($c instanceof jQuery )) $c = $ctxt[$c]; 
+            if( !$c ) return; //nothing to do; 
+            
+            if( !w || !h ){
+                $c.removeClass('hidden').css({position: 'absolute'});
+                w = $c[0].scrollWidth, h = $c[0].scrollHeight; //$c.outerHeight();
+                $c.addClass('hidden');
+            }
             
             if( !s ){
                 var dim = this._dim( $el ); 
+                if( dim.w > w ) w = dim.w; 
+
                 if( showOn ){
                     var left = ( wnd.w < dim.x+dim.w+w )? dim.x-w : dim.x+dim.w; 
-                    $ctxt.css({position:'absolute', top: dim.y, left: left, width: dim.w });
+                    $c.css({top: dim.y, left: left, width: w });
                 }else{
                     var top = ( wnd.h+wnd.sy > dim.y+dim.h+offy+h )? dim.y+dim.h+offy : dim.y - h - offy;
-                    $ctxt.css({ position: 'absolute', top: top, left: dim.x, width: dim.w });                    
+                    if( top < 0 ){
+                        h += top; 
+                        top = 0;
+                    }                    
+                    $c.css({top: top, left: dim.x, width: w, 'max-height': h, 'overflow': 'scroll'});                    
                 }
                 
             }else if( !$.isArray(s) ){
@@ -87,7 +102,7 @@
                 if( s[0] == -1 ) s[0] = (wnd.w-w)/2; 
                 if( s[1] == -1 ) s[1] = (wnd.h-h)/2; 
                 
-                $ctxt.css({position:'fixed', left: s[0], top:s[1], width: w, height: h });
+                $c.css({position:'fixed', left: s[0], top:s[1], width: w, height: h });
             }
         },
         html: function(p, d){
@@ -111,12 +126,8 @@
                 $.popupMgr.html($c, o.data); //add data
                 this._changeClass(o.cls, o.name); //change the class
             }
-            
-            this._showNoAnim(o.name);
-            var w = $c.outerWidth(), h = $c.outerHeight();
-            this._hideNoAnim(o.name); //get the height
-            
-            $.popupMgr.pos( o.static, $c, $el, w, h, o.offy, o.showOn ); //position the popupMgr!
+
+            $.popupMgr.pos( o.static, $c, $el, o.w, o.h, o.offy, o.showOn ); //position the popupMgr!
 
             o.animate? $c.show(o.delay) : this._showNoAnim(o.name);
             

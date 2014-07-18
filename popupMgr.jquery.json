@@ -1,6 +1,6 @@
 {
     "name": "popupMgr",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "title": "popupMgr: Simple and Customizable Popup Manager",
     "author": {"name": "Bryan Cua"},
     "licenses": [{"type": "MIT", "url": "http://opensource.org/licenses/MIT"}],
